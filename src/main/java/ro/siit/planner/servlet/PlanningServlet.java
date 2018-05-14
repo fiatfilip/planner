@@ -17,6 +17,9 @@ import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
+import java.text.DateFormat;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.util.*;
 
 import static ro.siit.persistence.JpaListener.PERSISTENCE_FACTORY;
@@ -57,6 +60,21 @@ public class PlanningServlet extends HttpServlet {
         planning.setPlanningId(UUID.randomUUID());
         planning.setEmployee(employee);
         planning.setRoom(room);
+        DateFormat df = new SimpleDateFormat("yyyy-MM-dd");
+        Date startDate = new Date();
+        try {
+            startDate = df.parse(req.getParameter("startdate"));
+        }catch(ParseException pex){
+            log("Invalid start date", pex);
+        }
+        Date endDate = new Date();
+        try {
+            endDate = df.parse(req.getParameter("enddate"));
+        }catch(ParseException pex){
+            log("Invalid end date", pex);
+        }
+        planning.setStartDate(startDate);
+        planning.setEndDate(endDate);
         planningModel.schedulePlanning(planning);
         resp.sendRedirect(getServletContext().getContextPath() + "/plannings");
     }
